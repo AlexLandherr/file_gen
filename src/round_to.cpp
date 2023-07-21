@@ -1,14 +1,16 @@
-#include "include/round.h"
+#include "include/round_to.h"
 #include <string>
 #include <iomanip>
 #include <stdexcept>
 #include <limits>
 
-namespace round {
-    std::string round_to_str(double value, int precision = 2) {
+namespace round_to {
+    std::string round_to_str(double value, int precision) {
         //Round double value to given number of decimals places, default precision is 2.
-        if (value > std::numeric_limits<double>::max() || value < std::numeric_limits<double>::min()) {
-            throw std::invalid_argument("Argument 'value' is out of range for 'double' type.");
+
+        //SHOULD NOT HAVE USED THE COMMENTED-OUT COMPARISON!!!
+        if (value > std::numeric_limits<double>::max() || value < 0./*  || value < std::numeric_limits<double>::min() */) {
+            throw std::invalid_argument("Argument 'value' is out of range/too large for 'double' type or is less than zero.");
         } else if (precision > std::numeric_limits<int>::max() || precision < 0) {
             throw std::invalid_argument("Argument 'precision' is out of range for 'int' type.");
         }

@@ -1,9 +1,9 @@
 #include <string>
 
-#ifndef ROUND_H
-#define ROUND_H
+#ifndef ROUND_TO_H
+#define ROUND_TO_H
 
-namespace round {
+namespace round_to {
     std::string round_to_str(double value, int precision = 2);
 }
 
