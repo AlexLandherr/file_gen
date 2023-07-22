@@ -16,7 +16,7 @@ int main() {
     std::string test_file_name_str = "";
     try {
         test_file_name_str = replace::replace_char(' ', '_', timestamp::to_UTC(UTC_prog_start_time));
-    } catch (std::invalid_argument const& ex) {
+    } catch (const std::invalid_argument& ex) {
         std::cout << ex.what() << '\n';
     }
 
