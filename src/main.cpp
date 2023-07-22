@@ -60,18 +60,93 @@ int main() {
                 }
             }
 
-            std::fstream test_fs{file_path_str, std::ios::out}; //Creating a file stream object to output to.
-            test_fs.put('a'); //Puts a single character into the test file.
+            try {
+                std::fstream test_fs{file_path_str, std::ios::out}; //Creating a file stream object to output to.
+                test_fs.put('a'); //Puts a single character into the test file.
+            } catch (const std::exception& e) {
+                std::cout << e.what() << '\n';
+            }
 
             std::filesystem::path p = file_path_str;
-            std::filesystem::resize_file(p, byte_val); //Resize file to specified size.
-            std::cout << "File size after resize (binary prefix): " << prefix::to_binary_prefix(std::filesystem::file_size(p)) << '\n';
-            std::cout << "File size after resize (decimal prefix): " << prefix::to_decimal_prefix(std::filesystem::file_size(p)) << '\n';
+            try {
+                std::filesystem::resize_file(p, byte_val); //Resize file to specified size.
+            } catch (const std::filesystem::filesystem_error& e) {
+                std::cout << e.what() << '\n';
+            }
+
+            try {
+                std::cout << "File size (binary prefix): " << prefix::to_binary_prefix(std::filesystem::file_size(p)) << '\n';
+            } catch (const std::filesystem::filesystem_error& e) {
+                std::cout << e.what() << '\n';
+            } catch (const std::invalid_argument& e) {
+                std::cout << e.what() << '\n';
+            }
+
+            try {
+                std::cout << "File size (decimal prefix): " << prefix::to_decimal_prefix(std::filesystem::file_size(p)) << '\n';
+            } catch (const std::filesystem::filesystem_error& e) {
+                std::cout << e.what() << '\n';
+            } catch (const std::invalid_argument& e) {
+                std::cout << e.what() << '\n';
+            }
 
             break;
         }
         case 1: {
             //Select from a range of preset values.
+            std::array<uint64_t, 6> preset_byte_values = {1000, 1024, 1000000, 1048576, 1000000000, 1073741824};
+            unsigned int byte_select = 0;
+
+            while (true) {
+                    std::cout << "Select one of the preset byte values from the list below:" << '\n';
+                    std::cout << "0. " << prefix::to_decimal_prefix(preset_byte_values[0]) << " (1000 B)." << '\n';
+                    std::cout << "1. " << prefix::to_binary_prefix(preset_byte_values[1]) << " (1024 B)." << '\n';
+                    std::cout << "2. " << prefix::to_decimal_prefix(preset_byte_values[2]) << " (1000000 B)." << '\n';
+                    std::cout << "3. " << prefix::to_binary_prefix(preset_byte_values[3]) << " (1048576 B)." << '\n';
+                    std::cout << "4. " << prefix::to_decimal_prefix(preset_byte_values[4]) << " (1000000000 B)." << '\n';
+                    std::cout << "5. " << prefix::to_binary_prefix(preset_byte_values[5]) << " (1073741824 B)." << '\n';
+                    std::cout << "Enter one of the listed values: ";
+                    std::cin >> byte_select;
+                if (!std::cin) {
+                    std::cin.clear();
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    std::cerr << "\n\nThat's an invalid input! Please try again." << '\n';
+                } else if (byte_select >= 0 && byte_select < preset_byte_values.size()) {
+                    break;
+                } else {
+                    std::cout << "\nInvalid selection, try again!" << '\n';
+                }
+            }
+
+            try {
+                std::fstream test_fs{file_path_str, std::ios::out}; //Creating a file stream object to output to.
+                test_fs.put('a'); //Puts a single character into the test file.
+            } catch (const std::exception& e) {
+                std::cout << e.what() << '\n';
+            }
+
+            std::filesystem::path p = file_path_str;
+            try {
+                std::filesystem::resize_file(p, preset_byte_values[byte_select]); //Resize file to specified size.
+            } catch (const std::filesystem::filesystem_error& e) {
+                std::cout << e.what() << '\n';
+            }
+
+            try {
+                std::cout << "File size (binary prefix): " << prefix::to_binary_prefix(std::filesystem::file_size(p)) << '\n';
+            } catch (const std::filesystem::filesystem_error& e) {
+                std::cout << e.what() << '\n';
+            } catch (const std::invalid_argument& e) {
+                std::cout << e.what() << '\n';
+            }
+
+            try {
+                std::cout << "File size (decimal prefix): " << prefix::to_decimal_prefix(std::filesystem::file_size(p)) << '\n';
+            } catch (const std::filesystem::filesystem_error& e) {
+                std::cout << e.what() << '\n';
+            } catch (const std::invalid_argument& e) {
+                std::cout << e.what() << '\n';
+            }
 
             break;
         }
