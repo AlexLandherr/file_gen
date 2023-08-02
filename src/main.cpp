@@ -11,12 +11,10 @@
 #include <gflags/gflags.h>
 
 int main(int argc, char *argv[]) {
-    gflags::ParseCommandLineFlags(&argc, &argv, true);
+    int argcc = argc;
+    gflags::ParseCommandLineFlags(&argcc, &argv, true);
     
     std::cout << "argc: " << argc << '\n';
-
-    /* std::array<int, 3> valid_modes = {0, 1, 2};
-    int mode_select = 0; */
 
     const std::array<uint64_t, 6> preset_byte_values = {1000, 1024, 1000000, 1048576, 1000000000, 1073741824};
 
@@ -30,7 +28,8 @@ int main(int argc, char *argv[]) {
 
     std::string file_path_str = "test_files/File_Gen_Test_File_" + test_file_name_str + ".txt";
 
-    if (argc > 1) {
+    if (argc > argcc) {
+        std::cout << argcc - argc << " arguments were given.\n";
         if (FLAGS_use_presets) {
             std::cout << "Using preset values." << '\n';
             //Using preset values.
