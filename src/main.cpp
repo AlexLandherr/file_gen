@@ -2,15 +2,23 @@
 #include "include/round_to.h"
 #include "include/replace.h"
 #include "include/timestamp.h"
+#include "include/flags.h"
 #include <iostream>
 #include <filesystem>
 #include <fstream>
 #include <array>
 #include <chrono>
+#include <gflags/gflags.h>
 
-int main() {
-    std::array<int, 3> valid_modes = {0, 1, 2};
-    int mode_select = 0;
+int main(int argc, char *argv[]) {
+    gflags::ParseCommandLineFlags(&argc, &argv, true);
+    
+    std::cout << "argc: " << argc << '\n';
+
+    /* std::array<int, 3> valid_modes = {0, 1, 2};
+    int mode_select = 0; */
+
+    const std::array<uint64_t, 6> preset_byte_values = {1000, 1024, 1000000, 1048576, 1000000000, 1073741824};
 
     auto UTC_prog_start_time = std::chrono::system_clock::now();
     std::string test_file_name_str = "";
@@ -22,7 +30,78 @@ int main() {
 
     std::string file_path_str = "test_files/File_Gen_Test_File_" + test_file_name_str + ".txt";
 
-    while (true) {
+    if (argc > 1) {
+        if (FLAGS_use_presets) {
+            std::cout << "Using preset values." << '\n';
+            //Using preset values.
+            try {
+                std::fstream test_fs{file_path_str, std::ios::out}; //Creating a file stream object to output to.
+                test_fs.put('a'); //Puts a single character into the test file.
+            } catch (const std::exception& e) {
+                std::cout << e.what() << '\n';
+            }
+
+            std::filesystem::path path = file_path_str;
+            try {
+                std::filesystem::resize_file(path, preset_byte_values[FLAGS_byte_select]); //Resize file to specified size.
+            } catch (const std::filesystem::filesystem_error& e) {
+                std::cout << e.what() << '\n';
+            }
+
+            try {
+                std::cout << "File size (binary prefix): " << prefix::to_binary_prefix(std::filesystem::file_size(path)) << '\n';
+            } catch (const std::filesystem::filesystem_error& e) {
+                std::cout << e.what() << '\n';
+            } catch (const std::invalid_argument& e) {
+                std::cout << e.what() << '\n';
+            }
+
+            try {
+                std::cout << "File size (decimal prefix): " << prefix::to_decimal_prefix(std::filesystem::file_size(path)) << '\n';
+            } catch (const std::filesystem::filesystem_error& e) {
+                std::cout << e.what() << '\n';
+            } catch (const std::invalid_argument& e) {
+                std::cout << e.what() << '\n';
+            }
+        } else {
+            std::cout << "Not using preset values." << '\n';
+            //Not using preset values.
+            try {
+                std::fstream test_fs{file_path_str, std::ios::out}; //Creating a file stream object to output to.
+                test_fs.put('a'); //Puts a single character into the test file.
+            } catch (const std::exception& e) {
+                std::cout << e.what() << '\n';
+            }
+
+            std::filesystem::path path = file_path_str;
+            try {
+                std::filesystem::resize_file(path, FLAGS_fsize); //Resize file to specified size.
+            } catch (const std::filesystem::filesystem_error& e) {
+                std::cout << e.what() << '\n';
+            }
+
+            try {
+                std::cout << "File size (binary prefix): " << prefix::to_binary_prefix(std::filesystem::file_size(path)) << '\n';
+            } catch (const std::filesystem::filesystem_error& e) {
+                std::cout << e.what() << '\n';
+            } catch (const std::invalid_argument& e) {
+                std::cout << e.what() << '\n';
+            }
+
+            try {
+                std::cout << "File size (decimal prefix): " << prefix::to_decimal_prefix(std::filesystem::file_size(path)) << '\n';
+            } catch (const std::filesystem::filesystem_error& e) {
+                std::cout << e.what() << '\n';
+            } catch (const std::invalid_argument& e) {
+                std::cout << e.what() << '\n';
+            }
+        }
+    } else {
+        std::cout << "No arguments were given." << '\n';
+        std::exit(EXIT_FAILURE);
+    }
+
+    /* while (true) {
         std::cout << "Select test file generation mode from list below:" << '\n';
         std::cout << "0. Write out full byte value (in decimal form)." << '\n';
         std::cout << "1. Select from a range of preset values." << '\n';
@@ -159,7 +238,7 @@ int main() {
             std::cout << "Defaulted to exiting program since no valid input was made." << '\n';
             std::exit(EXIT_FAILURE);
         }
-    }
+    } */
     
     return 0;
 }
